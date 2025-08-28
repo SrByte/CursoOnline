@@ -1,7 +1,8 @@
+using CursoOnline.DominioTest._Utils;
 using ExpectedObjects;
-using static CursoOnline.DominioTest.CursoTests;
+using static CursoOnline.DominioTest.Cursos.CursoTests;
 
-namespace CursoOnline.DominioTest;
+namespace CursoOnline.DominioTest.Cursos;
 
 public class CursoTests
 {
@@ -74,9 +75,9 @@ public class CursoTests
         };
 
         // Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() => 
-        new Curso(string.Empty, cursoEsperado.CargaHoraria, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso));
-        Assert.Equal("Nome do curso é obrigatório", exception.Message);
+        Assert.Throws<ArgumentException>(() =>
+        new Curso(string.Empty, cursoEsperado.CargaHoraria, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso))
+            .ComMensagem("Nome do curso é obrigatório");
     }
     [Theory]
     [InlineData(0)]
@@ -87,15 +88,15 @@ public class CursoTests
         var cursoEsperado = new
         {
             Nome = "Curso de Testes",
-            CargaHoraria = 0,
+            CargaHoraria = 10,
             PublicoAlvo = PublicoAlvo.Estudante,
             ValorCurso = 199.99m
         };
 
         // Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() =>
-        new Curso(cursoEsperado.Nome, cargaHorariaInvalida, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso));
-        Assert.Equal("Carga horária deve ser maior que zero", exception.Message);
+        Assert.Throws<ArgumentException>(() =>
+        new Curso(cursoEsperado.Nome, cargaHorariaInvalida, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso))
+            .ComMensagem("Carga horária deve ser maior que zero");
     }
     [Theory]
     [InlineData("")]
@@ -111,8 +112,8 @@ public class CursoTests
             ValorCurso = 199.99m
         };
         // Act & Assert
-       Assert.Throws<ArgumentException>(() =>
-        new Curso(nomeInvalido, cursoEsperado.CargaHoraria, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso));
+        Assert.Throws<ArgumentException>(() =>
+         new Curso(nomeInvalido, cursoEsperado.CargaHoraria, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso));
     }
 
 }
@@ -127,14 +128,14 @@ internal class Curso
 
     public Curso(string nome, int cargaHoraria, PublicoAlvo publicoAlvo, decimal valorCurso)
     {
-        if(string.IsNullOrEmpty(nome))
+        if (string.IsNullOrEmpty(nome))
             throw new ArgumentException("Nome do curso é obrigatório");
-        if(cargaHoraria <1)
+        if (cargaHoraria < 1)
             throw new ArgumentException("Carga horária deve ser maior que zero");
 
-        this.Nome = nome;
-        this.CargaHoraria = cargaHoraria;
-        this.PublicoAlvo = publicoAlvo;
-        this.ValorCurso = valorCurso;
+        Nome = nome;
+        CargaHoraria = cargaHoraria;
+        PublicoAlvo = publicoAlvo;
+        ValorCurso = valorCurso;
     }
 }
