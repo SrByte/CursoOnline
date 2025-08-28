@@ -61,7 +61,62 @@ public class CursoTests
         //Assert.True(curso.ValorCurso > 0);
 
     }
+    [Fact]
+    public void NaoDeveCriarCursoComNomeVazio()
+    {
+        // Arrange
+        var cursoEsperado = new
+        {
+            Nome = "Curso de Testes",
+            CargaHoraria = 40,
+            PublicoAlvo = PublicoAlvo.Estudante,
+            ValorCurso = 199.99m
+        };
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() => 
+        new Curso(string.Empty, cursoEsperado.CargaHoraria, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso));
+        Assert.Equal("Nome do curso é obrigatório", exception.Message);
+    }
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-100)]
+    public void NaoDeveCriarCursoTerUmaCargaMenorQueHum(int cargaHorariaInvalida)
+    {
+        // Arrange
+        var cursoEsperado = new
+        {
+            Nome = "Curso de Testes",
+            CargaHoraria = 0,
+            PublicoAlvo = PublicoAlvo.Estudante,
+            ValorCurso = 199.99m
+        };
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() =>
+        new Curso(cursoEsperado.Nome, cargaHorariaInvalida, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso));
+        Assert.Equal("Carga horária deve ser maior que zero", exception.Message);
+    }
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void NaoDeveCursoTerNomeInvalido(string nomeInvalido)
+    {
+        // Arrange
+        var cursoEsperado = new
+        {
+            Nome = "Curso de Testes",
+            CargaHoraria = 40,
+            PublicoAlvo = PublicoAlvo.Estudante,
+            ValorCurso = 199.99m
+        };
+        // Act & Assert
+       Assert.Throws<ArgumentException>(() =>
+        new Curso(nomeInvalido, cursoEsperado.CargaHoraria, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso));
+    }
+
 }
+
 
 internal class Curso
 {
@@ -72,6 +127,11 @@ internal class Curso
 
     public Curso(string nome, int cargaHoraria, PublicoAlvo publicoAlvo, decimal valorCurso)
     {
+        if(string.IsNullOrEmpty(nome))
+            throw new ArgumentException("Nome do curso é obrigatório");
+        if(cargaHoraria <1)
+            throw new ArgumentException("Carga horária deve ser maior que zero");
+
         this.Nome = nome;
         this.CargaHoraria = cargaHoraria;
         this.PublicoAlvo = publicoAlvo;
