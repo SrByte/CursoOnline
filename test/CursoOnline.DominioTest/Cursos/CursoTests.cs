@@ -1,12 +1,30 @@
+using CursoOnline.DominioTest._Builder;
 using CursoOnline.DominioTest._Utils;
 using ExpectedObjects;
+using Xunit.Abstractions;
 using static CursoOnline.DominioTest.Cursos.CursoTests;
 
 namespace CursoOnline.DominioTest.Cursos;
 
-public class CursoTests
+public class CursoTests : IDisposable
 {
+    private readonly ITestOutputHelper _testOutputHelper;
+    private readonly string _nome;
+    private string _descricao;
+    private int _cargaHoraria;
+    private readonly PublicoAlvo _publicoAlvo;
+    private decimal _valorCurso;
 
+    public CursoTests(ITestOutputHelper testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
+        _testOutputHelper.WriteLine("Construtor de CursoTests");
+    }
+    public void Dispose()
+    {
+        _testOutputHelper.WriteLine("Dispose sendo executado");
+
+    }
     /// <summary>
     /// Critérios de aceite
     /// 
@@ -39,14 +57,15 @@ public class CursoTests
         // Arrange
         var cursoEsperado = new
         {
-            Nome = "Curso de Testes",
-            CargaHoraria = 40,
-            PublicoAlvo = PublicoAlvo.Estudante,
+            Nome = _nome,
+            Descricao = _descricao,
+            CargaHoraria = _cargaHoraria,
+            PublicoAlvo = _publicoAlvo,
             ValorCurso = 199.99m
         };
 
         // Act
-        var curso = new Curso(cursoEsperado.Nome, cursoEsperado.CargaHoraria, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso);
+        var curso = new Curso(cursoEsperado.Nome, cursoEsperado.Descricao, cursoEsperado.CargaHoraria, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso);
 
         // Assert
         cursoEsperado.ToExpectedObject().ShouldMatch(curso);
@@ -65,18 +84,10 @@ public class CursoTests
     [Fact]
     public void NaoDeveCriarCursoComNomeVazio()
     {
-        // Arrange
-        var cursoEsperado = new
-        {
-            Nome = "Curso de Testes",
-            CargaHoraria = 40,
-            PublicoAlvo = PublicoAlvo.Estudante,
-            ValorCurso = 199.99m
-        };
-
+        
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-        new Curso(string.Empty, cursoEsperado.CargaHoraria, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso))
+       CursoBuilder.Novo().ComNomeVazio().Build())
             .ComMensagem("Nome do curso é obrigatório");
     }
     [Theory]
@@ -84,18 +95,9 @@ public class CursoTests
     [InlineData(-100)]
     public void NaoDeveCriarCursoTerUmaCargaMenorQueHum(int cargaHorariaInvalida)
     {
-        // Arrange
-        var cursoEsperado = new
-        {
-            Nome = "Curso de Testes",
-            CargaHoraria = 10,
-            PublicoAlvo = PublicoAlvo.Estudante,
-            ValorCurso = 199.99m
-        };
-
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-        new Curso(cursoEsperado.Nome, cargaHorariaInvalida, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso))
+        CursoBuilder.Novo().ComCargaHoraria(cargaHorariaInvalida).Build())
             .ComMensagem("Carga horária deve ser maior que zero");
     }
     [Theory]
@@ -103,17 +105,9 @@ public class CursoTests
     [InlineData(null)]
     public void NaoDeveCursoTerNomeInvalido(string nomeInvalido)
     {
-        // Arrange
-        var cursoEsperado = new
-        {
-            Nome = "Curso de Testes",
-            CargaHoraria = 40,
-            PublicoAlvo = PublicoAlvo.Estudante,
-            ValorCurso = 199.99m
-        };
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-         new Curso(nomeInvalido, cursoEsperado.CargaHoraria, cursoEsperado.PublicoAlvo, cursoEsperado.ValorCurso));
+         CursoBuilder.Novo().ComNome(nomeInvalido).Build());
     }
 
 }
@@ -122,11 +116,12 @@ public class CursoTests
 internal class Curso
 {
     public string Nome { get; private set; }
+    public string Descricao { get; private set; }
     public int CargaHoraria { get; private set; }
     public PublicoAlvo PublicoAlvo { get; private set; }
     public decimal ValorCurso { get; private set; }
 
-    public Curso(string nome, int cargaHoraria, PublicoAlvo publicoAlvo, decimal valorCurso)
+    public Curso(string nome, string descricao, int cargaHoraria, PublicoAlvo publicoAlvo, decimal valorCurso)
     {
         if (string.IsNullOrEmpty(nome))
             throw new ArgumentException("Nome do curso é obrigatório");
@@ -134,6 +129,7 @@ internal class Curso
             throw new ArgumentException("Carga horária deve ser maior que zero");
 
         Nome = nome;
+        Descricao = descricao;
         CargaHoraria = cargaHoraria;
         PublicoAlvo = publicoAlvo;
         ValorCurso = valorCurso;
