@@ -1,4 +1,5 @@
-﻿using CursoOnline.DominioTest.Cursos;
+﻿using CursoOnline.Dominio;
+using CursoOnline.DominioTest.Cursos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

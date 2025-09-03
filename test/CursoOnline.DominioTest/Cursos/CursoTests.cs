@@ -1,8 +1,9 @@
+using Bogus;
+using CursoOnline.Dominio;
 using CursoOnline.DominioTest._Builder;
 using CursoOnline.DominioTest._Utils;
 using ExpectedObjects;
 using Xunit.Abstractions;
-using static CursoOnline.DominioTest.Cursos.CursoTests;
 
 namespace CursoOnline.DominioTest.Cursos;
 
@@ -17,8 +18,17 @@ public class CursoTests : IDisposable
 
     public CursoTests(ITestOutputHelper testOutputHelper)
     {
+        _nome= "Curso de Testes";
+        _descricao = "Descrição do curso de testes";
+        _cargaHoraria = 40;
+        _publicoAlvo = PublicoAlvo.Estudante;
+        _valorCurso = 199.99m;
+        
         _testOutputHelper = testOutputHelper;
         _testOutputHelper.WriteLine("Construtor de CursoTests");
+        var faker = new Faker();
+        _testOutputHelper.WriteLine($"{faker.Company.CompanyName()}");
+
     }
     public void Dispose()
     {
@@ -43,13 +53,7 @@ public class CursoTests : IDisposable
     /// -- Todos os atributos são obrigatórios
     ///     
 
-    public enum PublicoAlvo
-    {
-        Estudante,
-        Universitário,
-        Empregado,
-        Empreendedor
-    }
+ 
 
     [Fact]
     public void DeveCriarCurso()
@@ -90,6 +94,7 @@ public class CursoTests : IDisposable
        CursoBuilder.Novo().ComNomeVazio().Build())
             .ComMensagem("Nome do curso é obrigatório");
     }
+    
     [Theory]
     [InlineData(0)]
     [InlineData(-100)]
@@ -110,28 +115,6 @@ public class CursoTests : IDisposable
          CursoBuilder.Novo().ComNome(nomeInvalido).Build());
     }
 
+
 }
 
-
-internal class Curso
-{
-    public string Nome { get; private set; }
-    public string Descricao { get; private set; }
-    public int CargaHoraria { get; private set; }
-    public PublicoAlvo PublicoAlvo { get; private set; }
-    public decimal ValorCurso { get; private set; }
-
-    public Curso(string nome, string descricao, int cargaHoraria, PublicoAlvo publicoAlvo, decimal valorCurso)
-    {
-        if (string.IsNullOrEmpty(nome))
-            throw new ArgumentException("Nome do curso é obrigatório");
-        if (cargaHoraria < 1)
-            throw new ArgumentException("Carga horária deve ser maior que zero");
-
-        Nome = nome;
-        Descricao = descricao;
-        CargaHoraria = cargaHoraria;
-        PublicoAlvo = publicoAlvo;
-        ValorCurso = valorCurso;
-    }
-}
