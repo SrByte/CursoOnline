@@ -14,8 +14,8 @@ namespace CursoOnline.Dados.Contextos
         }
 
         public DbSet<Curso> Cursos { get; set; }
-        public DbSet<Aluno> Alunos { get; set; }
-        public DbSet<Matricula> Matriculas { get; set; }
+        //public DbSet<Aluno> Alunos { get; set; }
+        //public DbSet<Matricula> Matriculas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

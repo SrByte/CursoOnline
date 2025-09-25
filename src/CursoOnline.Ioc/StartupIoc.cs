@@ -1,14 +1,13 @@
-﻿using System;
-using CursoOnline.Dados.Contextos;
+﻿using CursoOnline.Dados.Contextos;
 using CursoOnline.Dados.Repositorios;
+using CursoOnline.Dominio._Base;
 using CursoOnline.Dominio.Alunos;
 using CursoOnline.Dominio.Cursos;
+using CursoOnline.Dominio.Matriculas;
 using CursoOnline.Dominio.PublicosAlvo;
-using CursoOnline.Dominio._Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CursoOnline.Dominio.Matriculas;
 
 namespace CursoOnline.Ioc
 {
@@ -16,19 +15,29 @@ namespace CursoOnline.Ioc
     {
         public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
+            // 🔹 Registrar o DbContext
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(configuration["ConnectionString"]));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+            );
+
+            // 🔹 Repositórios genéricos e específicos
             services.AddScoped(typeof(IRepositorio<>), typeof(RepositorioBase<>));
-            services.AddScoped(typeof(ICursoRepositorio), typeof(CursoRepositorio));
-            services.AddScoped(typeof(IAlunoRepositorio), typeof(AlunoRepositorio));
-            services.AddScoped(typeof(IMatriculaRepositorio), typeof(MatriculaRepositorio));
-            services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
-            services.AddScoped(typeof(IConversorDePublicoAlvo), typeof(ConversorDePublicoAlvo));
+            services.AddScoped<ICursoRepositorio, CursoRepositorio>();
+            //services.AddScoped<IAlunoRepositorio, AlunoRepositorio>();
+            //services.AddScoped<IMatriculaRepositorio, MatriculaRepositorio>();
+
+            // 🔹 Unit of Work
+            //services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // 🔹 Conversor de Público-Alvo
+            services.AddScoped<IConversorDePublicoAlvo, ConversorDePublicoAlvo>();
+
+            //    // 🔹 Armazenadores / Services de aplicação
             services.AddScoped<ArmazenadorDeCurso>();
-            services.AddScoped<ArmazenadorDeAluno>();
-            services.AddScoped<CriacaoDaMatricula>();
-            services.AddScoped<ConclusaoDaMatricula>();
-            services.AddScoped<CancelamentoDaMatricula>();
+            //    services.AddScoped<ArmazenadorDeAluno>();
+            //    services.AddScoped<CriacaoDaMatricula>();
+            //    services.AddScoped<ConclusaoDaMatricula>();
+            //    services.AddScoped<CancelamentoDaMatricula>();
         }
     }
 }

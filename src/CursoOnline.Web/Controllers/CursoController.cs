@@ -35,6 +35,7 @@ namespace CursoOnline.Web.Controllers
             }
 
             return View("Index", PaginatedList<CursoParaListagemDto>.Create(null, Request));
+
         }
 
         public IActionResult Editar(int id)
