@@ -27,7 +27,7 @@ namespace CursoOnline.Ioc
             //services.AddScoped<IMatriculaRepositorio, MatriculaRepositorio>();
 
             // 🔹 Unit of Work
-            //services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // 🔹 Conversor de Público-Alvo
             services.AddScoped<IConversorDePublicoAlvo, ConversorDePublicoAlvo>();
